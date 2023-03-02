@@ -15,6 +15,9 @@ $config = [
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => 'tUnB2_KSVOAunsKQohXG9KpsMY7sudzx',
+            'parsers' => [
+                'application/json' => 'yii\web\JsonParser',
+            ]
         ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
@@ -46,6 +49,13 @@ $config = [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                [
+                    'class' => 'yii\rest\UrlRule',
+                    'controller' => ['cook', 'dish', 'order'],
+                    //'pluralize' => true
+                ],
+                'POST orders/<id:\d+>/dishes/<dishId:\d+>' => 'order/add-dish',
+                'GET cooks/popular' => 'cook/popular'
             ],
         ],
     ],

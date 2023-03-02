@@ -3,6 +3,8 @@
 namespace app\models;
 
 use Yii;
+use yii\behaviors\TimestampBehavior;
+use yii\db\Expression;
 
 /**
  * This is the model class for table "order".
@@ -30,10 +32,7 @@ class Order extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['uuid', 'created_at', 'updated_at'], 'required'],
-            [['created_at', 'updated_at'], 'integer'],
-            [['uuid'], 'string', 'max' => 255],
-            [['uuid'], 'unique'],
+            [['uuid'], 'unique']
         ];
     }
 
@@ -58,5 +57,39 @@ class Order extends \yii\db\ActiveRecord
     public function getDishOrders()
     {
         return $this->hasMany(DishOrder::class, ['order_id' => 'id']);
+    }
+
+    /**
+     * Gets query for [[Orders]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    /*public function getOrders()
+    {
+        return $this->hasMany(Order::class, ['order_id' => 'id'])->joinWith('product');
+    }*/
+
+
+    /**
+     * @inheritdoc
+     */
+    public function beforeSave($insert)
+    {
+        if (!parent::beforeSave($insert))
+            return false;
+
+        if ($insert)
+            $this->uuid = new Expression('UUID()');
+        return true;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function behaviors()
+    {
+        return [
+            TimestampBehavior::class
+        ];
     }
 }
